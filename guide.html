@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프로젝트 통합 가이드 (FastAPI + React + Docker)</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --text-light: #64748b;
+            --border-color: #e2e8f0;
+            --code-bg: #0f172a;
+            --code-text: #e2e8f0;
+            --sidebar-bg: #ffffff;
+            --header-bg: rgba(255, 255, 255, 0.9);
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #3b82f6;
+            --primary-dark: #60a5fa;
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --text-light: #94a3b8;
+            --border-color: #334155;
+            --code-bg: #020617;
+            --code-text: #f8fafc;
+            --sidebar-bg: #1e293b;
+            --header-bg: rgba(30, 41, 59, 0.9);
+        }
+
+        * {
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.7;
+            margin: 0;
+            padding-top: 80px; /* 상단 고정바 공간 확보 */
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* 상단 고정 네비게이션 */
+        .top-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background-color: var(--header-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 40px;
+            z-index: 1000;
+        }
+
+        .nav-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .theme-toggle {
+            background: var(--border-color);
+            border: none;
+            color: var(--text-color);
+            padding: 8px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle:hover {
+            opacity: 0.8;
+        }
+
+        /* 레이아웃 구조 (좌측 메뉴 + 우측 본문) */
+        .layout-container {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            gap: 30px;
+        }
+
+        /* 좌측 사이드바 메뉴 (고정형) */
+        .sidebar {
+            width: 260px;
+            position: sticky;
+            top: 100px;
+            height: calc(100vh - 120px);
+            background: var(--sidebar-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .sidebar h3 {
+            font-size: 1rem;
+            margin-top: 0;
+            color: var(--text-light);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar li {
+            margin-bottom: 12px;
+        }
+
+        .sidebar a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 0.95rem;
+            transition: color 0.2s;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+        }
+
+        .sidebar a:hover {
+            background-color: rgba(37, 99, 235, 0.1);
+            color: var(--primary-color);
+        }
+
+        /* 우측 메인 컨텐츠 */
+        .main-content {
+            flex-grow: 1;
+            max-width: 880px;
+        }
+
+        .section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-top: 0;
+            font-size: 1.35rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        h3 {
+            color: var(--text-color);
+            font-size: 1.1rem;
+            margin-top: 25px;
+        }
+
+        ul, ol {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 16px 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Fira Code', Consolas, Monaco, monospace;
+            font-size: 0.95rem;
+            margin: 15px 0;
+        }
+
+        code {
+            font-family: 'Fira Code', Consolas, Monaco, monospace;
+            background-color: rgba(100, 116, 139, 0.15);
+            color: var(--primary-color);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        pre code {
+            background-color: transparent;
+            color: var(--code-text);
+            padding: 0;
+        }
+
+        .badge {
+            background-color: #dbeafe;
+            color: var(--primary-color);
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 6px;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .link-card {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 600;
+            transition: all 0.2s;
+            display: block;
+        }
+
+        .link-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .link-card span {
+            display: block;
+            font-weight: normal;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        /* 반응형 대응 (모바일 화면) */
+        @media (max-width: 850px) {
+            .layout-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                position: static;
+                height: auto;
+                margin-bottom: 20px;
+            }
+            .top-navbar {
+                padding: 0 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- 상단 고정 네비게이션 바 -->
+<header class="top-navbar">
+    <div class="nav-title">📦 프로젝트 통합 가이드</div>
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙 다크모드</button>
+</header>
+
+<div class="layout-container">
+    <!-- 좌측 메뉴 사이드바 -->
+    <nav class="sidebar">
+        <h3>목차 이동</h3>
+        <ul>
+            <li><a href="#step1">1. Docker 설치</a></li>
+            <li><a href="#step2">2. 프로젝트 소스 준비</a></li>
+            <li><a href="#step3">3. 실시간 개발 (추천) 🚀</a></li>
+            <li><a href="#step4">4. 최종 배포 빌드</a></li>
+            <li><a href="#step5">5. 웹 서비스 접속</a></li>
+            <li><a href="#management">관리 및 종료 방법</a></li>
+        </ul>
+    </nav>
+
+    <!-- 우측 메인 컨텐츠 영역 -->
+    <main class="main-content">
+        <!-- 1단계 -->
+        <section id="step1" class="section">
+            <h2>🛠️ 1단계: Docker Desktop 설치 및 초기 설정 (최초 1회)</h2>
+            <p>컴퓨터에 도커가 설치되어 있지 않다면 아래 순서대로 설치를 진행해 주세요.</p>
+            <ul>
+                <li><strong>설치 파일 다운로드:</strong> Docker Desktop 공식 다운로드 페이지에 접속하여 운영체제에 맞는 파일을 다운로드합니다.</li>
+                <li><strong>프로그램 설치:</strong> 다운로드한 인스톨러(<code>.exe</code>)를 실행하고 기본값(Use WSL 2 features 등)을 유지한 채 끝까지 진행합니다.</li>
+                <li><strong>PC 재부팅 및 구동 확인:</strong> 설치 완료 후 컴퓨터를 재부팅하고, 작업표시줄 트레이 아이콘에 도커 고래 모양 불이 들어오며 "Docker Desktop is running" 상태가 될 때까지 대기합니다.</li>
+            </ul>
+        </section>
+
+        <!-- 2단계 -->
+        <section id="step2" class="section">
+            <h2>📁 2단계: 프로젝트 소스 준비</h2>
+            <ul>
+                <li>전달받은 압축 파일 또는 작업 폴더를 원하는 경로(예: <code>C:\DEV</code> 등)에 위치시킵니다.</li>
+                <li>폴더 내부에 아래 구조의 파일과 디렉터리들이 정상적으로 들어있는지 확인합니다.</li>
+            </ul>
+            <pre><code>backend/             # FastAPI 백엔드 소스 코드
+frontend/            # React 프론트엔드 소스 코드
+Dockerfile           # 통합 배포 빌드 설정
+docker-compose.yaml  # 로컬 실시간 개발용 설정
+build_docker.py      # 배포용 이미지 빌드 스크립트</code></pre>
+        </section>
+
+        <!-- 3단계 -->
+        <section id="step3" class="section">
+            <h2>💻 3단계: 실시간 개발 및 즉시 테스트 방법 <span class="badge">추천 🚀</span></h2>
+            <p>코드를 수정할 때마다 매번 도커를 다시 빌드할 필요 없이, <strong>백엔드는 도커 볼륨 마운트</strong>로, <strong>프론트엔드는 리액트 개발 서버</strong>로 띄워 실시간으로 화면과 API를 테스트합니다.</p>
+            
+            <h3>1. 백엔드 구동 (실시간 반영 적용)</h3>
+            <ol>
+                <li>프로젝트 최상단 폴더 경로에서 터미널(CMD 또는 PowerShell)을 엽니다.</li>
+                <li>아래 명령어를 입력하여 백엔드 컨테이너를 백그라운드로 실행합니다. (소스 코드가 볼륨 마운트되어 즉시 반영됩니다)</li>
+            </ol>
+            <pre><code>docker compose up -d</code></pre>
+            <ul>
+                <li>💡 백엔드 코드(<code>backend/</code> 하위 파일)를 수정하고 저장하면 <code>--reload</code> 옵션에 의해 서버가 자동으로 감지하고 반영합니다.</li>
+            </ul>
+
+            <h3>2. 프론트엔드 구동 (HMR 실시간 화면 반영)</h3>
+            <ol>
+                <li>터미널 창을 하나 더 엽니다.</li>
+                <li><code>frontend</code> 폴더로 이동하여 리액트 개발 서버를 실행합니다.</li>
+            </ol>
+            <pre><code>cd frontend
+npm run dev</code></pre>
+            <ul>
+                <li>💡 터미널에 안내되는 주소(예: <code>http://localhost:5173</code>)로 접속하여 <code>App.jsx</code> 등의 코드를 수정하고 저장하면, 브라우저 화면이 0.1초 만에 실시간으로 반영됩니다.</li>
+            </ul>
+        </section>
+
+        <!-- 4단계 -->
+        <section id="step4" class="section">
+            <h2>🚀 4단계: 최종 배포용 도커 이미지 빌드 및 테스트</h2>
+            <p>개발이 완료된 코드를 최종적으로 하나의 도커 이미지로 완벽하게 패키징하여 테스트하는 과정입니다.</p>
+            <ol>
+                <li>프로젝트 최상단 폴더로 이동하여 기존 실행 중인 컨테이너를 정리합니다.
+                    <pre><code>docker compose down</code></pre>
+                </li>
+                <li>배포용 이미지를 캐시 없이 새로 빌드합니다.
+                    <pre><code>python build_docker.py</code></pre>
+                    <em>(직접 명령어 빌드 시: <code>docker build --no-cache -t kgrib275/hy-project:latest .</code>)</em>
+                </li>
+                <li>빌드가 완료되면 통합된 컨테이너를 실행합니다.
+                    <pre><code>docker compose up -d</code></pre>
+                </li>
+            </ol>
+        </section>
+
+        <!-- 5단계 -->
+        <section id="step5" class="section">
+            <h2>🌐 5단계: 웹 서비스 접속 및 확인</h2>
+            <p>서버가 정상 구동되었다면 인터넷 브라우저를 열어 아래 링크에 접속합니다.</p>
+            <div class="links-grid">
+                <a href="http://localhost:8000" target="_blank" class="link-card">
+                    🌐 메인 웹 서비스 접속
+                    <span>http://localhost:8000</span>
+                </a>
+                <a href="http://localhost:8000/api/health" target="_blank" class="link-card">
+                    🩺 API 백엔드 헬스체크
+                    <span>http://localhost:8000/api/health</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- 관리 및 종료 -->
+        <section id="management" class="section">
+            <h2>🛑 관리 및 종료 방법</h2>
+            <ul>
+                <li><strong>로컬 개발 컨테이너 종료:</strong>
+                    <pre><code>docker compose down</code></pre>
+                </li>
+                <li><strong>포트 충돌(<code>port is already allocated</code>) 에러 대처법:</strong><br>이전에 실행된 컨테이너가 포트를 잡고 있는 경우 아래 명령어로 깔끔히 정리해 주세요.
+                    <pre><code>docker stop $(docker ps -a -q)
+docker rm $(docker ps -a -q)</code></pre>
+                </li>
+            </ul>
+        </section>
+    </main>
+</div>
+
+<!-- 다크모드 토글 스크립트 -->
+<script>
+    function toggleTheme() {
+        const html = document.documentElement;
+        const btn = document.getElementById('themeBtn');
+        const currentTheme = html.getAttribute('data-theme');
+        
+        if (currentTheme === 'dark') {
+            html.setAttribute('data-theme', 'light');
+            btn.textContent = '🌙 다크모드';
+        } else {
+            html.setAttribute('data-theme', 'dark');
+            btn.textContent = '☀️ 라이트모드';
+        }
+    }
+</script>
+
+</body>
+</html>

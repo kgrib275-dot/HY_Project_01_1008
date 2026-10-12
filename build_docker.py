@@ -1,7 +1,7 @@
 import subprocess
 import sys
 
-IMAGE_NAME = "project-01-app:latest"
+IMAGE_NAME = "hy-project:latest"
 CONTAINER_NAME = "project-01-container"
 PORT_MAPPING = "8000:8000"
 
