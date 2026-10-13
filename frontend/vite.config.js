@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 1001,     // 1번 목표: 1001 포트 고정
-    host: true      // 2번 목표: 외부 IP/네트워크 접근 허용
+    port: 8000,    // 👈 8000번 포트로 변경
+    host: true     // 👈 외부 IP 및 네트워크 접근 허용
   }
 })
