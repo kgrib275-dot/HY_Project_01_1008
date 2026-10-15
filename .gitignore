@@ -3,9 +3,10 @@
 .env.*
 !.env.example
 
-# 스킬 결과물 (고객 제안서 · 화면설계서)
+# 스킬 결과물 (고객 제안서 · 화면설계서 · 회의록)
 proposals/
 wireframes/
+meetings/
 
 # 빌드 · 환경
 __pycache__/
