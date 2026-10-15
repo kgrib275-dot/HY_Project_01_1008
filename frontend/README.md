@@ -1,8 +1,8 @@
-# React + Vite
+# Trade IQ Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React 18 + Vite. 전체 프로젝트 설명은 루트 [README.md](../README.md)를 참고하세요.
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- `npm run dev` — 개발 서버(포트 8000)
+- `npm run build` — `dist/` 생성 (Docker · PyInstaller가 사용)
+- `npm run lint` — ESLint
+- 샘플 데이터: `src/data/initialData.js`

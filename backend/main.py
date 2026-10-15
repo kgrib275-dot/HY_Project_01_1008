@@ -8,11 +8,12 @@ from fastapi.responses import FileResponse
 
 app = FastAPI(title="Hyosung Trade AX API", version="1.0")
 
-# CORS 설정
+# CORS 설정: CORS_ORIGINS(쉼표 구분)가 있으면 해당 출처만, 없으면 전체 허용(개발용, 쿠키 미사용)
+_origins = [o.strip() for o in os.getenv("CORS_ORIGINS", "").split(",") if o.strip()]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=_origins or ["*"],
+    allow_credentials=bool(_origins),
     allow_methods=["*"],
     allow_headers=["*"],
 )

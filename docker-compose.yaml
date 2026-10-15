@@ -5,8 +5,11 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - .:/app  # 내 로컬의 소스 코드 폴더와 컨테이너 내부를 실시간 동기화
+      # 이미지 안의 /app/static(프론트 빌드 결과)을 가리지 않도록 main.py만 마운트
+      - ./backend/main.py:/app/main.py
     environment:
       - PYTHONUNBUFFERED=1
-    # 👇 핵심: --reload 옵션을 붙여서 파이썬 코드 변경을 감지하게 합니다
-    command: uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
+      # 쉼표 구분. 비우면 모든 출처 허용(개발용)
+      - CORS_ORIGINS=${CORS_ORIGINS:-}
+    # 개발 편의: 파이썬 코드 변경 시 자동 재시작
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
