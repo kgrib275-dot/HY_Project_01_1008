@@ -16,6 +16,17 @@ description: 사용자가 준 서비스 · 화면 · 기능 내용을 표준 화
 - `scripts/build_deck.py` — 슬라이드 선택 + 텍스트 교체 + 정리 + 검증을 한 번에 (사용법은 파일 상단 주석)
 - PPTX 구조 편집(슬라이드 복제 `add_slide.py` · 정리 `clean.py` · 검증 `validate.py`)은 `anthropic-skills:pptx` 스킬 것을 쓴다. 필요한 순간에 그 스킬을 로드한다.
 
+## 사전 점검 (작업 시작 전에 매번 먼저 실행 — 필요한 것이 없으면 설치하고 진행한다)
+1. `anthropic-skills:pptx` 스킬을 로드한다. 로드되지 않으면 사용자에게 "PPTX 편집 스킬이 없어 정리 · 검증을 생략한다"고 알리고, 결과물 보고에도 그 사실을 적는다 (`build_deck.py`는 이 경우 경고만 내고 생성은 계속한다).
+2. 필요한 Python 패키지를 확인한다:
+   ```bash
+   python -c "import defusedxml" || pip install defusedxml
+   ```
+   - 권한 오류면 `pip install --user defusedxml`로 재시도한다
+   - 이후 실행 중 `ModuleNotFoundError: No module named 'xxx'`가 나오면 **그 모듈을 `pip install xxx`로 설치하고 같은 명령을 다시 실행**한다 (예: `lxml`)
+   - 설치가 끝내 실패하면 원인(권한 · 네트워크 · 사내 정책)을 사용자에게 알리고, 사용자가 직접 실행할 명령을 안내한다
+3. 설치한 패키지가 있으면 최종 보고에 한 줄로 적는다.
+
 ## 절차
 
 ### 1. 입력 정리 (생성 전 사용자 확인)
