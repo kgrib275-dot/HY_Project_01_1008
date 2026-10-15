@@ -5,263 +5,67 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>팀 공용 Claude 스킬 가이드</title>
 <style>
-:root{
-  --bg:#f6f7fb; --card:#ffffff; --fg:#1f2937; --mut:#6b7280; --line:#e5e7eb;
-  --acc:#1e3a5f; --acc-soft:#e8edf3; --ok:#166534; --ok-bg:#e8f5ec; --warn:#92400e; --warn-bg:#fdf3e1;
-  --code-bg:#0f172a; --code-fg:#e2e8f0;
-}
-:root:not([data-theme="light"]){}
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --bg:#0b1220; --card:#131c2e; --fg:#e5e7eb; --mut:#9aa6b8; --line:#26334a;
-    --acc:#8fb4e8; --acc-soft:#1b2a44; --ok:#7bd49a; --ok-bg:#14301f; --warn:#f2c27a; --warn-bg:#33270f;
-    --code-bg:#070c16; --code-fg:#dbe4f0;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#0b1220; --card:#131c2e; --fg:#e5e7eb; --mut:#9aa6b8; --line:#26334a;
-  --acc:#8fb4e8; --acc-soft:#1b2a44; --ok:#7bd49a; --ok-bg:#14301f; --warn:#f2c27a; --warn-bg:#33270f;
-  --code-bg:#070c16; --code-fg:#dbe4f0;
-}
+:root{--bg:#f6f7fb;--card:#fff;--fg:#1f2937;--mut:#6b7280;--line:#e5e7eb;--acc:#1e3a5f;--soft:#e8edf3;--warn:#92400e;--warn-bg:#fdf3e1;--code:#0f172a;--code-fg:#e2e8f0}
+@media (prefers-color-scheme:dark){:root{--bg:#0b1220;--card:#131c2e;--fg:#e5e7eb;--mut:#9aa6b8;--line:#26334a;--acc:#8fb4e8;--soft:#1b2a44;--warn:#f2c27a;--warn-bg:#33270f;--code:#070c16;--code-fg:#dbe4f0}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);line-height:1.65;
-  font-family:"Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif;font-size:15px}
-.wrap{max-width:920px;margin:0 auto;padding:32px 16px 72px}
-header{margin-bottom:8px}
-h1{font-size:28px;margin:0 0 6px;color:var(--acc)}
-.lead{color:var(--mut);margin:0 0 20px}
-nav{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 28px}
-nav a{padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--card);
-  color:var(--acc);text-decoration:none;font-size:13px}
-nav a:hover{background:var(--acc-soft)}
-section{margin:0 0 36px}
-h2{font-size:20px;margin:0 0 12px;color:var(--acc);padding-bottom:6px;border-bottom:2px solid var(--acc)}
-h3{font-size:16px;margin:18px 0 6px}
-p{margin:8px 0}
-.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:12px 0}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-@media (max-width:780px){.grid{grid-template-columns:1fr}}
-.skill{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
-.skill h3{margin:0 0 2px;font-size:17px;color:var(--acc)}
-.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;background:var(--acc-soft);color:var(--acc);margin:0 4px 4px 0}
-.kv{width:100%;border-collapse:collapse;font-size:14px;margin:8px 0}
-.kv th,.kv td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
-.kv th{background:var(--acc-soft);width:120px;white-space:nowrap}
+body{margin:0;background:var(--bg);color:var(--fg);line-height:1.6;font-size:15px;font-family:"Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:28px 16px 56px}
+h1{font-size:24px;margin:0 0 4px;color:var(--acc)}
+.lead{color:var(--mut);margin:0 0 22px}
+h2{font-size:17px;margin:26px 0 10px;color:var(--acc);border-bottom:2px solid var(--acc);padding-bottom:4px}
 .tw{overflow-x:auto}
-table.t{border-collapse:collapse;width:100%;font-size:14px}
-table.t th,table.t td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
-table.t th{background:var(--acc-soft)}
-code{font-family:Consolas,"D2Coding",monospace;font-size:13px;background:var(--acc-soft);padding:1px 6px;border-radius:4px}
-pre{background:var(--code-bg);color:var(--code-fg);border-radius:8px;padding:12px 14px;overflow-x:auto;margin:8px 0;
-  font-family:Consolas,"D2Coding",monospace;font-size:13px;line-height:1.55}
+table{border-collapse:collapse;width:100%;font-size:14px;background:var(--card)}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--soft)}
+code{font-family:Consolas,"D2Coding",monospace;font-size:13px;background:var(--soft);padding:1px 6px;border-radius:4px}
+pre{background:var(--code);color:var(--code-fg);border-radius:8px;padding:10px 14px;overflow-x:auto;margin:8px 0;font-family:Consolas,"D2Coding",monospace;font-size:13px}
 pre code{background:none;padding:0;color:inherit}
-.steps{counter-reset:s;list-style:none;padding:0;margin:8px 0}
-.steps li{counter-increment:s;position:relative;padding:8px 0 8px 40px;margin:0}
-.steps li::before{content:counter(s);position:absolute;left:0;top:7px;width:26px;height:26px;border-radius:50%;
-  background:var(--acc);color:var(--card);font-weight:bold;font-size:13px;display:flex;align-items:center;justify-content:center}
-.note{border-radius:8px;padding:10px 14px;margin:10px 0;font-size:14px}
-.note.ok{background:var(--ok-bg);color:var(--ok)}
-.note.warn{background:var(--warn-bg);color:var(--warn)}
-.note b{font-weight:bold}
-ul{margin:6px 0;padding-left:20px}li{margin:3px 0}
-details{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:8px 0}
-summary{cursor:pointer;font-weight:bold}
-footer{color:var(--mut);font-size:13px;margin-top:40px;border-top:1px solid var(--line);padding-top:12px}
+ol{padding-left:22px;margin:6px 0}li{margin:5px 0}
+.note{background:var(--warn-bg);color:var(--warn);border-radius:8px;padding:9px 13px;margin:10px 0;font-size:14px}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-<header>
-  <h1>팀 공용 Claude 스킬 가이드</h1>
-  <p class="lead">제안서 · 화면설계서 · 회의록을 팀 표준 양식으로 만들어 주는 스킬 3종의 설명과 설치 방법입니다. (작성 기준일 2026-10-15)</p>
-</header>
+<h1>팀 공용 Claude 스킬 가이드</h1>
+<p class="lead">제안서 · 화면설계서 · 회의록을 팀 표준 양식으로 만들어 주는 스킬 3종입니다.</p>
 
-<nav>
-  <a href="#what">스킬이란</a>
-  <a href="#skills">스킬 3종</a>
-  <a href="#install">설치 방법</a>
-  <a href="#use">사용 방법</a>
-  <a href="#update">수정 · 업데이트</a>
-  <a href="#trouble">문제 해결</a>
-  <a href="#limits">알아 둘 점</a>
-</nav>
+<h2>스킬 3종</h2>
+<div class="tw"><table>
+  <tr><th>스킬</th><th>용도</th><th>호출 예</th><th>결과물</th></tr>
+  <tr><td><code>proposal_01</code></td><td>제안서 (PPTX 70p 양식)</td><td><code>/proposal_01 Trade IQ 요약형 제안서 만들어줘</code></td><td><code>proposals/</code></td></tr>
+  <tr><td><code>UIWireframes_01</code></td><td>화면설계서 (PPTX 50p 양식)</td><td><code>/UIWireframes_01 Trade IQ 화면 목록으로 화면설계서 만들어줘</code></td><td><code>wireframes/</code></td></tr>
+  <tr><td><code>MeetingNote</code></td><td>회의록 (Word + HTML)</td><td><code>/MeetingNote 아래 녹취록으로 회의록 만들어줘 …</code></td><td><code>meetings/</code></td></tr>
+</table></div>
+<p>사용법: <code>/스킬이름</code> 뒤에 내용(붙여넣기 또는 파일 경로)을 입력하면 → Claude가 빠진 정보를 묻고 → 확인 후 파일을 만듭니다. 없는 수치는 만들지 않고 <code>[N%]</code> 같은 자리표시자로 남깁니다.</p>
 
-<section id="what">
-  <h2>1. 스킬이란?</h2>
-  <p>스킬은 <code>SKILL.md</code> 파일이 들어 있는 <b>폴더</b>입니다. 프로그램을 설치하는 것이 아니라, Claude에게 주는 <b>작업 매뉴얼 + 양식 파일 + 보조 스크립트</b> 묶음입니다.</p>
-  <div class="card">
-    <ol class="steps">
-      <li><b>등록 (자동)</b> — Claude Code는 시작할 때 <code>.claude/skills/*/SKILL.md</code>를 읽어 각 스킬의 이름과 설명(<code>description</code>)을 목록에 올립니다. 별도 등록 명령은 없습니다.</li>
-      <li><b>호출</b> — <code>/스킬이름 내용</code>처럼 직접 부르거나, “회의록 만들어줘”처럼 말하면 설명이 맞는 스킬을 Claude가 불러옵니다.</li>
-      <li><b>실행</b> — 호출되면 <code>SKILL.md</code> 전체가 로드되고, Claude가 그 지침대로 양식 파일과 스크립트를 사용해 결과 파일을 만듭니다.</li>
-    </ol>
-  </div>
-  <div class="note warn"><b>핵심 규칙:</b> 스킬은 <b>두 곳 중 한 곳</b>에 있어야 보입니다. ① 열어 둔 프로젝트의 <code>.claude/skills</code> (그 폴더에서 실행할 때만), ② 내 PC 전역 <code>~/.claude/skills</code> (어느 폴더에서든). Claude Code는 <b>시작할 때 한 번만</b> 목록을 읽으므로, 스킬을 추가·수정한 뒤에는 새로 시작해야 합니다.</div>
-</section>
+<h2>설치 방법</h2>
+<p><b>필요한 것:</b> Claude Code, Python 3 (패키지는 Claude가 필요할 때 알아서 설치합니다)</p>
 
-<section id="skills">
-  <h2>2. 스킬 3종</h2>
-  <div class="grid">
-    <div class="skill">
-      <h3>proposal_01</h3>
-      <p><span class="tag">제안서</span><span class="tag">PPTX 70p</span></p>
-      <p>프로젝트 내용을 표준 제안서 양식에 맞춰 채웁니다. Ⅰ 제안 배경 → Ⅵ 부록 구성이며 전체(70p) 또는 요약형(15~25p)으로 만듭니다.</p>
-    </div>
-    <div class="skill">
-      <h3>UIWireframes_01</h3>
-      <p><span class="tag">화면설계서</span><span class="tag">PPTX 50p</span></p>
-      <p>화면 목록과 기능을 표준 화면설계서(와이어프레임 + 번호 설명표 + 정의서)로 만듭니다. 제안서와 같은 ID 체계를 씁니다.</p>
-    </div>
-    <div class="skill">
-      <h3>MeetingNote</h3>
-      <p><span class="tag">회의록</span><span class="tag">Word + HTML</span></p>
-      <p>녹취록·메모를 7개 섹션 표준 회의록으로 정리해 <b>같은 서식의 .docx와 .html</b> 두 파일을 만듭니다.</p>
-    </div>
-  </div>
-
-  <h3>proposal_01 — 제안서</h3>
-  <table class="kv">
-    <tr><th>입력</th><td>사업 · 프로젝트 내용(메모, 데이터, 이 저장소의 프로젝트 내용). 고객사 · 제안사 · 작성자 · 날짜 · 현황 · 목표 · 범위 · 기능 · 일정 · 비용</td></tr>
-    <tr><th>호출 예</th><td><code>/proposal_01 Trade IQ 프로젝트로 효성 무역PG 대상 요약형 제안서 만들어줘</code></td></tr>
-    <tr><th>동작</th><td>입력을 표로 요약해 확인받음 → 슬라이드 선택 · 번호 재정리 → 양식의 <b>텍스트만 교체</b>(디자인 유지) → 검증</td></tr>
-    <tr><th>결과물</th><td><code>proposals/[고객사]_[사업명]_제안서_YYYYMMDD.pptx</code></td></tr>
-    <tr><th>주의</th><td>입력에 없는 수치는 만들지 않고 <code>[N%]</code> · <code>[000]</code> 자리표시자로 남깁니다. 마지막 보고의 “미확정 항목”을 직접 채워야 합니다. 양식 속 예시 문장은 “사내 AI Assistant” 사업 기준이라 다른 성격의 사업이면 대부분 새로 씁니다.</td></tr>
-  </table>
-
-  <h3>UIWireframes_01 — 화면설계서</h3>
-  <table class="kv">
-    <tr><th>입력</th><td>서비스 설명, 화면 목록(화면명 · ID · 유형 · 대상 · 연결 기능), 메뉴 구조, 역할, 화면별 요소와 동작 규칙</td></tr>
-    <tr><th>호출 예</th><td><code>/UIWireframes_01 Trade IQ 화면 목록으로 화면설계서 만들어줘</code></td></tr>
-    <tr><th>동작</th><td>화면 유형에 가까운 원본 페이지(로그인 · 목록 · 폼 · 대시보드 · 팝업 · 모바일 등)를 골라 와이어프레임 속 텍스트와 번호 설명표를 교체</td></tr>
-    <tr><th>결과물</th><td><code>wireframes/[서비스명]_화면설계서_YYYYMMDD.pptx</code></td></tr>
-    <tr><th>주의</th><td>도형 위에 글자가 올라가는 구조라 <b>글자 넘침 확인이 중요</b>합니다. 새 화면 생성은 아직 끝까지 시험해 보지 않았습니다. 처음 쓸 때는 결과를 꼭 PowerPoint에서 열어 확인하세요.</td></tr>
-  </table>
-
-  <h3>MeetingNote — 회의록</h3>
-  <table class="kv">
-    <tr><th>입력</th><td>녹취록 · 메모 · 전사 텍스트(붙여넣기 또는 파일 경로). 일시 · 장소 · 참석자 · 작성일이 없으면 먼저 묻습니다.</td></tr>
-    <tr><th>호출 예</th><td><code>/MeetingNote 아래 녹취록으로 회의록 만들어줘 …</code><br><code>/MeetingNote 오늘 회의록 양식을 내용 비우고 뽑아줘</code> (빈 양식)</td></tr>
-    <tr><th>구성</th><td>1 회의 개요 · 2 회의 목적 · 3 주요 논의 내용 · 4 결정 사항 · 5 Action Items · 6 리스크 및 이슈 · 7 확인 필요 사항 (값이 없는 섹션은 빠지고 번호 자동 재정렬)</td></tr>
-    <tr><th>결과물</th><td><code>meetings/회의록_YYYYMMDD.docx</code> + <code>.html</code> (저장 폴더를 지정하면 그곳에)</td></tr>
-    <tr><th>원칙</th><td>말하지 않은 내용은 만들지 않음 · 개조식 · 발화자 이름이 없으면 소속/역할 기준 · 추정한 담당/기한은 7번에 “확인 필요”로 명시</td></tr>
-  </table>
-</section>
-
-<section id="install">
-  <h2>3. 설치 방법</h2>
-  <p>팀원에게 필요한 것은 <b>Claude Code</b>와 <b>Python 3</b>입니다. 설치 방식은 두 가지이며, 함께 써도 됩니다.</p>
-
-  <h3>방법 A. 저장소로 받기 — 이 프로젝트 폴더에서만 사용</h3>
-  <p>스킬이 저장소에 들어 있으므로 받기만 하면 됩니다. 별도 설치 작업이 없습니다.</p>
-  <ol class="steps">
-    <li>저장소를 받습니다. (처음이면 <code>git clone</code>, 이미 있으면 <code>git pull</code>)
+<p><b>A. 이 프로젝트에서만 쓰기</b> — 저장소를 받기만 하면 됩니다.</p>
+<ol>
+  <li>저장소를 받고 그 폴더로 이동합니다.
 <pre><code>git clone https://github.com/kgrib275-dot/HY_Project_01_1008.git
 cd HY_Project_01_1008</code></pre></li>
-    <li><b>그 폴더에서</b> Claude Code를 실행합니다.
-<pre><code>claude</code></pre></li>
-    <li><code>/</code>를 입력해 <code>proposal_01</code> · <code>UIWireframes_01</code> · <code>MeetingNote</code>가 보이는지 확인합니다.</li>
-  </ol>
-  <div class="note warn"><b>홈 폴더(예: C:\Users\이름)에서 실행하면 보이지 않습니다.</b> 스킬이 저장소 폴더 안에 있기 때문입니다. 이미 켜 둔 창이면 종료 후 다시 시작하세요.</div>
+  <li>그 폴더에서 <code>claude</code>를 실행하고 <code>/</code>를 입력해 스킬 3개가 보이는지 확인합니다.</li>
+</ol>
 
-  <h3>방법 B. 내 PC 전역에 설치 — 모든 프로젝트에서 사용</h3>
-  <p>스킬을 <code>~/.claude/skills</code>(Windows: <code>C:\Users\이름\.claude\skills</code>)로 복사해 두면 어느 폴더에서 실행해도 보입니다. 동기화 스크립트가 이 복사를 대신합니다.</p>
-  <ol class="steps">
-    <li>방법 A의 1번처럼 저장소를 받아 둡니다(<code>git pull</code>로 최신 상태 유지).</li>
-    <li><code>.claude/skills/sync_to_global.bat</code>을 <b>더블클릭</b>합니다. (명령줄이면 <code>python sync_to_global.py</code>)</li>
-    <li>Claude Code를 <b>새로 시작</b>하고 아무 폴더에서나 <code>/</code>를 입력해 확인합니다.</li>
-  </ol>
-  <table class="t">
-    <tr><th>명령</th><th>의미</th></tr>
-    <tr><td><code>python sync_to_global.py</code></td><td>3개 스킬 모두 동기화</td></tr>
-    <tr><td><code>python sync_to_global.py MeetingNote</code></td><td>지정한 스킬만</td></tr>
-    <tr><td><code>python sync_to_global.py --dry-run</code></td><td>바뀔 내용만 표시(실제 복사 안 함) — 먼저 확인할 때</td></tr>
-  </table>
-  <div class="note ok"><b>안전장치:</b> <code>SKILL.md</code>가 있는 폴더만 복사하고, 전역 폴더의 다른 스킬은 건드리지 않으며, 같은 이름의 비(非)스킬 폴더가 있으면 덮어쓰지 않고 건너뜁니다. 원본에서 지운 파일은 복사본에서도 지워집니다.</div>
-  <details>
-    <summary>스크립트 없이 직접 복사하려면 (PowerShell)</summary>
-<pre><code>Copy-Item -Recurse .claude\skills\proposal_01     $HOME\.claude\skills\
-Copy-Item -Recurse .claude\skills\UIWireframes_01 $HOME\.claude\skills\
-Copy-Item -Recurse .claude\skills\MeetingNote     $HOME\.claude\skills\</code></pre>
-    <p>이 방식은 이후 수정사항이 자동으로 따라오지 않고, 원본에서 지운 파일도 남습니다. 동기화 스크립트를 권합니다.</p>
-  </details>
+<p><b>B. 모든 프로젝트에서 쓰기 (내 PC 전역 설치)</b></p>
+<ol>
+  <li><code>git pull</code>로 최신 상태를 받습니다.</li>
+  <li><code>.claude/skills/sync_to_global.bat</code>을 <b>더블클릭</b>합니다.</li>
+  <li>Claude Code를 <b>새로 시작</b>하고 <code>/</code>로 확인합니다.</li>
+</ol>
+<p>스킬이 업데이트되면 <code>git pull</code> 후 2번을 다시 실행하면 됩니다.</p>
 
-  <h3>필요한 것</h3>
-  <div class="tw"><table class="t">
-    <tr><th>항목</th><th>필요한 스킬</th><th>설명</th></tr>
-    <tr><td>Claude Code</td><td>3종 모두</td><td>CLI · 데스크톱 앱 Code 탭 · IDE 확장 · 웹(claude.ai/code)</td></tr>
-    <tr><td>Python 3</td><td>3종 모두</td><td>스크립트를 실행합니다. <code>python --version</code>으로 확인</td></tr>
-    <tr><td><code>anthropic-skills:pptx</code> 스킬</td><td>proposal_01 · UIWireframes_01</td><td>슬라이드 정리 · 검증 도구. 계정에 없으면 Claude가 알려 주며, 이 경우 파일은 만들어지지만 정리 · 검증이 생략됩니다.</td></tr>
-    <tr><td><code>defusedxml</code> 패키지</td><td>proposal_01 · UIWireframes_01</td><td><b>미리 설치할 필요 없음.</b> 스킬이 시작할 때 확인하고, 없으면 Claude가 <code>pip install</code> 후 진행합니다.</td></tr>
-    <tr><td>(추가 없음)</td><td>MeetingNote</td><td>Python 표준 라이브러리만 사용합니다.</td></tr>
-  </table></div>
-</section>
+<div class="note"><b>안 보이면:</b> ① 저장소 폴더가 아닌 곳에서 실행했는지(A 방식) ② 이미 켜 둔 창은 종료 후 재시작 — 스킬 목록은 시작할 때 한 번만 읽습니다.</div>
 
-<section id="use">
-  <h2>4. 사용 방법</h2>
-  <ol class="steps">
-    <li><code>/스킬이름</code> 뒤에 <b>내용</b>(텍스트 붙여넣기 · 파일 경로)을 함께 입력합니다.</li>
-    <li>Claude가 빠진 정보를 묻고, 입력을 표로 요약해 <b>확인</b>을 받습니다.</li>
-    <li>확인 후 파일을 만들고, 경로 · 생략한 부분 · <b>미확정 항목</b>을 보고합니다.</li>
-    <li>결과 파일을 열어 확인하고 필요한 부분을 알려 주면 해당 부분만 고칩니다.</li>
-  </ol>
-  <div class="tw"><table class="t">
-    <tr><th>스킬</th><th>기본 저장 위치(실행한 프로젝트 기준)</th></tr>
-    <tr><td>proposal_01</td><td><code>proposals/</code></td></tr>
-    <tr><td>UIWireframes_01</td><td><code>wireframes/</code></td></tr>
-    <tr><td>MeetingNote</td><td><code>meetings/</code> (폴더를 지정하면 그곳)</td></tr>
-  </table></div>
-  <div class="note warn"><b>보안:</b> 이 폴더들은 이 저장소의 <code>.gitignore</code>에 들어 있어 git에 올라가지 않습니다. 전역 설치로 <b>다른 프로젝트</b>에서 쓸 때는 그 프로젝트의 <code>.gitignore</code>에도 <code>proposals/</code> <code>wireframes/</code> <code>meetings/</code>를 넣어 두세요. 회의록에는 고객 · 계약 정보가 들어갈 수 있습니다.</div>
-</section>
-
-<section id="update">
-  <h2>5. 수정 · 업데이트</h2>
-  <ul>
-    <li><b>항상 원본(저장소의 <code>.claude/skills</code>)에서 고칩니다.</b> 전역 복사본을 직접 고치면 다음 동기화 때 원본으로 덮어써집니다.</li>
-    <li>고친 뒤: <code>sync_to_global.bat</code> 실행 → Claude Code 새로 시작.</li>
-    <li>팀에 반영: 스킬 파일만 골라 커밋·푸시 → 팀원은 <code>git pull</code> 후 (전역 설치를 쓰면) 동기화 스크립트를 다시 실행.</li>
-    <li>양식(<code>template.pptx</code> · <code>templates/</code>)을 바꿀 때는 파일을 교체하고, 슬라이드 번호가 바뀌면 <code>slide_map.md</code>도 함께 고칩니다.</li>
-    <li>프로젝트마다 다른 양식이 필요하면 폴더를 복사해 이름을 바꿉니다(예: <code>proposal_02</code>). 폴더 이름과 <code>SKILL.md</code>의 <code>name:</code> 값을 같게 맞추세요.</li>
-  </ul>
-</section>
-
-<section id="trouble">
-  <h2>6. 문제 해결</h2>
-  <div class="tw"><table class="t">
-    <tr><th>증상</th><th>원인 · 해결</th></tr>
-    <tr><td><code>/</code> 목록에 스킬이 안 보임</td><td>① 저장소 폴더가 아닌 곳에서 실행했는지(방법 A) → 폴더 이동 또는 전역 설치(방법 B) ② 이미 켜 둔 창이면 <b>종료 후 재시작</b> ③ 그래도 안 되면 <code>/skills</code> 화면을 확인</td></tr>
-    <tr><td>동기화 스크립트가 안 열림 / 오류</td><td><code>python --version</code>으로 Python 설치 확인. <code>.bat</code>이 막히면 명령줄에서 <code>python sync_to_global.py</code> 실행</td></tr>
-    <tr><td>패키지 설치 실패</td><td>사내 보안 정책 · 권한 문제일 수 있음. Claude가 안내하는 <code>pip install --user 패키지명</code>을 직접 실행</td></tr>
-    <tr><td>“PPTX 편집 스킬이 없다”는 안내</td><td>계정에 <code>anthropic-skills:pptx</code> 스킬이 없는 경우. 파일은 만들어지지만 정리·검증이 빠지므로 PowerPoint에서 열어 확인</td></tr>
-    <tr><td>PPTX에서 글자가 넘치거나 겹침</td><td>해당 슬라이드 번호를 알려 주면 문장을 줄여 다시 만듭니다 (폰트를 줄이지 않는 것이 원칙)</td></tr>
-    <tr><td>전역에서 고친 내용이 사라짐</td><td>동기화가 원본으로 덮어쓴 것입니다. 수정은 원본에서 하세요</td></tr>
-  </table></div>
-</section>
-
-<section id="limits">
-  <h2>7. 알아 둘 점 (확인 상태)</h2>
-  <div class="card">
-    <h3 style="margin-top:0">확인한 것</h3>
-    <ul>
-      <li>MeetingNote: 기존 회의록을 입력으로 재생성해 원본과 서식 · 구조가 일치함을 확인</li>
-      <li>제안서: 앞 10장, 요약형 25장을 생성하고 양식 검증을 통과함</li>
-      <li>동기화 스크립트: 임시 폴더에서 신규 복사 · 변경 없음 · 되돌리기 · 충돌 방지 · 다른 스킬 보존을 시험</li>
-    </ul>
-    <h3>확인하지 못한 것</h3>
-    <ul>
-      <li>생성된 <b>.docx를 Word에서</b>, <b>.pptx를 PowerPoint에서</b> 직접 열어 본 것은 아닙니다. 이 작업 PC에는 Word · PowerPoint · LibreOffice가 없어 <b>화면 렌더링 · 글자 넘침을 확인하지 못했습니다.</b></li>
-      <li>팀원 PC에서의 실제 호출 · 전역 설치 · 패키지 자동 설치</li>
-      <li>데스크톱 앱 Code 탭 · IDE · 웹(claude.ai/code)에서의 동작 (같은 Claude Code라 될 가능성이 높지만 미확인). 웹 Code는 클라우드 환경이라 내 PC의 경로(<code>C:\Users\…</code>)를 읽을 수 없으니 내용을 붙여넣어야 합니다.</li>
-      <li>일반 채팅(claude.ai 채팅 화면)은 프로젝트 폴더의 스킬을 읽지 않으므로 이 방식으로는 사용할 수 없습니다.</li>
-      <li>전역 폴더와 프로젝트 폴더에 같은 이름의 스킬이 있을 때 어느 쪽이 우선하는지</li>
-    </ul>
-    <p>처음 쓰는 팀원은 <b>가벼운 입력으로 한 번 시험</b>해 보고 문제가 있으면 공유해 주세요.</p>
-  </div>
-</section>
-
-<footer>
-  위치: <code>.claude/skills/스킬_사용가이드.html</code> · 함께 보기: <code>.claude/skills/README.md</code> · 각 스킬의 상세 지침: 스킬 폴더의 <code>SKILL.md</code>
-</footer>
+<h2>주의</h2>
+<ul>
+  <li>수정은 항상 <b>저장소의 원본</b>에서 합니다. 전역 복사본은 다음 동기화 때 덮어써집니다.</li>
+  <li>결과물 폴더는 git에 올라가지 않습니다. 다른 프로젝트에서 쓸 때는 그 프로젝트의 <code>.gitignore</code>에도 넣으세요. (회의록에 고객 정보가 들어갈 수 있습니다)</li>
+  <li>생성된 파일을 Word · PowerPoint에서 직접 열어 확인하지는 못했습니다. 글자 넘침이 있을 수 있으니 처음 쓸 때는 열어서 확인해 주세요.</li>
+</ul>
 
 </div>
 </body>
